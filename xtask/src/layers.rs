@@ -39,6 +39,9 @@ pub const TABLE: &[(&str, Class)] = &[
     ("raster", Class::Layer(0)),
     ("psd", Class::Standalone),
     ("codecs", Class::Standalone),
+    // Generative AI backends (OpenRouter image API for generative fill). No workspace deps:
+    // the transport is native-only and the rest is pure request/response types.
+    ("gen", Class::Standalone),
     // Optional HEIF/HEIC decoder (heic-rs), used only by `codecs` behind its `heif` feature.
     ("heif", Class::Standalone),
     ("raw", Class::Standalone),

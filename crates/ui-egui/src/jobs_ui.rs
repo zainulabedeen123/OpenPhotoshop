@@ -410,6 +410,15 @@ fn on_event(app: &mut PhotocraftApp, ctx: &egui::Context, e: JobEvent) {
             app.ui.panels.brush_settings = true;
             app.ui.brush_tab = 1;
         }
+        JobOutcome::Done(v) if e.command == "edit.generativeFill" => {
+            // The model's time is paid for per call, so the status line says what it cost.
+            app.sync_views();
+            app.ui.status = match v.get("costUsd").and_then(Value::as_f64).filter(|c| c.is_finite() && *c > 0.0) {
+                Some(cost) => format!("Generative Fill: new layer (${cost:.4} of model time)"),
+                None => "Generative Fill: new layer".to_string(),
+            };
+            app.ui.status_error = false;
+        }
         JobOutcome::Done(_) => {
             app.sync_views();
             app.ui.status = e.label;

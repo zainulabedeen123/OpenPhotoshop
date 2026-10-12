@@ -105,6 +105,9 @@ By default PhotoCraft's own crates log at `info` and everything else at `warn`. 
 |---|---|
 | `PHOTOCRAFT_CONTROL_PORT` | Same as `--control <port>` |
 | `RUST_LOG` | Log levels for standard error and the log file (see [Logs](#logs)) |
+| `PHOTOCRAFT_OPENROUTER_API_KEY` | OpenRouter API key for Edit › Generative Fill (`crates/gen`, `bytedance-seed/seedream-5-0-flash`). Never stored by PhotoCraft; the fallback name `OPENROUTER_API_KEY` also works. Unset, the command answers that it needs one |
+| `PHOTOCRAFT_OPENROUTER_BASE_URL` | Point Generative Fill at another OpenRouter-compatible root (tests, proxies) |
+| `PHOTOCRAFT_OPENROUTER_MODEL` | Use another OpenRouter model id for Generative Fill |
 | `PHOTOCRAFT_CONTROL_TOKEN` | 64-hex bearer token for control TCP (avoid on shared systems where environment inspection is possible) |
 | `PHOTOCRAFT_CONTROL_TOKEN_FILE` | Read, or create for a server, the control bearer-token file |
 | `PHOTOCRAFT_AUTOMATION_READ_ROOT` | Desktop app only: automation read root. Headless CLI modes require the `--automation-read-root` flag |

@@ -234,6 +234,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                 DialogKind::Command if crate::rasterize_prompt::owns(&fields) => crate::rasterize_prompt::body(ui, &fields),
                 DialogKind::Command if crate::tool_reset::owns(&fields) => crate::tool_reset::body(ui),
                 DialogKind::Command if crate::crop_presets::owns(&fields) => crate::crop_presets::body(app, ui, &mut fields),
+                DialogKind::Command if crate::gen_fill_ui::owns(&fields) => crate::gen_fill_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::variables_ui::owns(&fields) => crate::variables_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::file_ui::owns(&fields) => crate::file_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::color_picker_ui::owns(&fields) => {
@@ -293,13 +294,15 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                             tl!("Create")
                         } else if crate::delete_layer_prompt::owns(&d.fields) {
                             tl!("Delete")
+                        } else if crate::gen_fill_ui::owns(&d.fields) {
+                            tl!("Generate")
                         } else if d.fields.contains_key("__export") {
                             tl!("Export")
                         } else {
                             crate::file_ui::ok_label(&d.fields).unwrap_or(tl!("OK"))
                         };
                         // Dialogs that need an input first (a preset name, a selection) grey OK out.
-                        let can_ok = crate::crop_presets::can_confirm(app, &fields);
+                        let can_ok = crate::crop_presets::can_confirm(app, &fields) && crate::gen_fill_ui::can_confirm(app, &fields);
                         let ok = DialogButton::new(ButtonRole::Default, ok_label, 84.0).enabled(can_ok);
                         // Photoshop: holding Alt turns Cancel into Reset (the dialog stays open).
                         let reset = ui.input(|i| i.modifiers.alt) && crate::adjust_dialog::resets(&fields);
@@ -469,6 +472,7 @@ pub fn confirm(app: &mut PhotocraftApp, id: u64) -> Result<Value, String> {
         DialogKind::Command if crate::rasterize_prompt::owns(&d.fields) => crate::rasterize_prompt::confirm(app, &d.fields),
         DialogKind::Command if crate::tool_reset::owns(&d.fields) => crate::tool_reset::confirm(app),
         DialogKind::Command if crate::crop_presets::owns(&d.fields) => crate::crop_presets::confirm(app, &d.fields),
+        DialogKind::Command if crate::gen_fill_ui::owns(&d.fields) => crate::gen_fill_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::variables_ui::owns(&d.fields) => crate::variables_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::file_ui::owns(&d.fields) => crate::file_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::color_picker_ui::owns(&d.fields) => crate::color_picker_ui::confirm(app, &d.fields),

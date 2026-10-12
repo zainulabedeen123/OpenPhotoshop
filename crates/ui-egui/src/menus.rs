@@ -559,6 +559,10 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
         "edit.transform.warpGrid" if app.ui.transform.as_ref().is_some_and(|t| t.warp.is_some()) && params.get("warp").is_none() => {
             crate::transform_tool::edit_session_warp(app, id, &params).map(|_| json!({"transform": app.ui.transform}))
         }
+        // Edit › Generative Fill… asks for the prompt first (with params: the engine runs it).
+        "edit.generativeFill" if params.as_object().is_none_or(|o| o.is_empty()) => {
+            Ok(json!({"dialog": crate::gen_fill_ui::open(app).ok_or("no document open")?}))
+        }
         sz if crate::sizing::is_sizing(sz) && params.as_object().is_none_or(|o| o.is_empty()) => {
             Ok(json!({"dialog": crate::sizing::open(app, sz).ok_or("no document")?}))
         }

@@ -1,6 +1,6 @@
 # PhotoCraft vs Adobe Photoshop: target-app parity
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-10 · **Change:** minor (Tilt-Shift measurements added; earlier the same day: major, full re-measure against Photoshop 2026 27.11.0; merged `parity-estimate.md` and the roadmap's honest assessment) · **Target:** Adobe Photoshop 2026
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-12 · **Change:** minor (AI dimension: Generative Fill landed — 10% → ~30% breadth, AI readiness 10% → 20%; earlier: minor, Tilt-Shift measurements added; 2026-10-10: major, full re-measure against Photoshop 2026 27.11.0) · **Target:** Adobe Photoshop 2026
 
 The authoritative answer to "how close is PhotoCraft to Photoshop, and how much work is left". The
 one-page summary is [`ROADMAP.md`](../ROADMAP.md); the ranked work list is [`gaps.md`](gaps.md);
@@ -65,7 +65,7 @@ architecture and the PSD writer are the serial parts.
 | Panels | 10% | 30 / 35 Window-menu panels | 86% | measured (`view_cmds.rs`, panel modules) |
 | Filters and adjustments | 10% | every Filter and Image › Adjustments item live; Filter Gallery 47 looks | 100% | measured (menu catalog) |
 | File formats (usage-weighted) | 15% | 13 of 31 Photoshop formats supported in Photoshop's directions, 4 partial; the common ones (PSD/PSB, TIFF, JPEG, PNG, WebP) all present | ~80% (48% by count) | measured list, estimated weights ([file-format-parity.md](file-format-parity.md)) |
-| AI / generative | 10% | classical Select Subject/Sky, Remove tool, Content-Aware; no Generative Fill/Expand, Neural Filters, Sky Replacement, Super Zoom | ~15% | estimated |
+| AI / generative | 10% | classical Select Subject/Sky, Remove tool, Content-Aware; no Neural Filters, Sky Replacement, Super Zoom | ~30% | Generative Fill live as of 2026-10-12 (`edit.generativeFill`, OpenRouter Seedream 5.0 Flash, remote only) |
 | Ecosystem (plug-ins, scripting, libraries) | 10% | WebAssembly plug-ins, CLI, MCP, actions; no .8BF, UXP/ExtendScript, .atn import, Libraries | ~20% | estimated |
 | **Weighted** | 100% | | **~76%** | |
 
@@ -84,7 +84,7 @@ Weights reflect what a working Photoshop user depends on (photographers, retouch
 | Localization | 5% | 55% | 80–140 | 7 of the 12 key languages at 100% of measured UI keys; Hindi, Arabic, Vietnamese absent; no RTL UI; engine messages English | [localization-parity.md](localization-parity.md) |
 | Platforms | 5% | 80% | 30–60 | macOS (notarized), Windows (unsigned), Linux (AppImage/deb/rpm/Flatpak), web, FreeBSD partial; no Windows ARM64, no in-app updates | [scorecard.md](scorecard.md#distribution) |
 | Ecosystem (plug-ins, scripting, presets, libraries) | 5% | 15% | 250–450 | No .8BF hosting (#2647), no UXP/ExtendScript, no .atn import; .abr/.grd/.pat/.aco/.ase/.cube supported | [gaps.md](gaps.md) |
-| AI features | 5% | 10% | 300–600 | No ML runtime at all (scorecard AUTO-219-7); classical substitutes only. Needs an owner decision and openly licensed models (#41) | [gaps.md](gaps.md) |
+| AI features | 5% | 20% | 250–500 | Generative Fill works (remote OpenRouter, key from the environment); no local ML runtime (scorecard AUTO-219-7); Expand/Upscale, Neural Filters missing. Local models still need an owner decision (#41) | [gaps.md](gaps.md) |
 | **Weighted** | 100% | **~46%** | **2,340–4,100** | | |
 
 ## Mainstream practitioner: ~43%
@@ -182,7 +182,7 @@ parity for the area and are already contained in the dimension rows above.
 | Print, export, Save for Web | 50% | 60–100 | JPEG Options dialog missing (FILE-215-19), no Photoshop PDF, no separations, Save for Web settings not remembered |
 | Video / timeline, data-driven graphics | 30% | 100–200 | Menu items live; frame model persists in `.pcraft`; no PSD video-layer mapping |
 | Workspace, panels, preferences | 40% | 150–250 | 46 of 149 prefs do nothing; no floating/OS-window panel groups; Libraries, Comments, Contextual Task Bar missing |
-| AI / generative | 10% | 300–600 | See the dimension row |
+| AI / generative | 30% | 250–500 | Generative Fill live (remote, needs an API key); Expand/Upscale, Neural Filters, Sky Replacement, Super Zoom still missing. See the dimension row |
 
 ## Remaining effort and calibration
 
@@ -560,6 +560,7 @@ See [method, raw measurements and reproduction](five-algorithm-performance.md).
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-12 | minor | Generative Fill landed (`edit.generativeFill`, `crates/gen` on OpenRouter's Seedream 5.0 Flash): AI breadth 10% → ~30%, AI readiness 10% → 20%, G15 estimate 300–600 → 250–500 h; local ONNX models still missing (AUTO-219-7) |
 | 2026-10-10 | minor | Added measured Tilt-Shift computation/filtered-proxy gains and inconclusive cases; parity percentages and budgets unchanged |
 | 2026-10-10 | minor | Readiness-by-audience table: percent and hours for full, mainstream and essentials; full number confirmed as the additive weighted sum over dimensions (46%, reported ~45%) |
 | 2026-10-10 | minor | Added mainstream-practitioner (~43%) and essentials-user (~61%) numbers with written weights and discounts; full ready-for-real-work rechecked against its written weights (46%, reported ~45%), unchanged |

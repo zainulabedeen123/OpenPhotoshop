@@ -20,6 +20,7 @@ photocraft-doc = { path = "crates/doc" }
 photocraft-ops = { path = "crates/ops" }
 photocraft-psd = { path = "crates/psd" }
 photocraft-codecs = { path = "crates/codecs" }
+photocraft-gen = { path = "crates/gen" }
 photocraft-raw = { path = "crates/raw" }
 photocraft-affinity = { path = "crates/affinity" }
 photocraft-compose = { path = "crates/compose" }

@@ -1,6 +1,6 @@
 # Where PhotoCraft falls short of Photoshop
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-10 · **Change:** minor (Tilt-Shift evidence added to G2; earlier the same day: major, every known shortfall ranked from the re-measure) · **Target:** Adobe Photoshop 2026
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-12 · **Change:** minor (G15: Generative Fill landed on OpenRouter's Seedream 5.0 Flash; earlier: minor, Tilt-Shift evidence added to G2) · **Target:** Adobe Photoshop 2026
 
 Every known shortfall against Photoshop 2026 (27.11.0), one entry each, ranked by user impact
 on the way to beta. This is the work list agents pick from: take the highest-ranked entry that
@@ -33,7 +33,7 @@ what an agent can't finish alone.
 | G12 | Pen tablets and display hardware | hardware | medium | 80–150 h | [hardware-parity](hardware-parity.md) |
 | G13 | Languages: Hindi, Arabic, Vietnamese, RTL, engine messages | localization | medium | 80–140 h + human | [localization-parity](localization-parity.md) |
 | G14 | Camera Raw depth | features, formats | medium | 120–200 h | [file-format-parity](file-format-parity.md#camera-raw) |
-| G15 | AI and generative features | AI | medium (high for some users) | 300–600 h + human | [target-app-parity](target-app-parity.md) |
+| G15 | AI and generative features (Generative Fill landed) | AI | medium (high for some users) | 250–500 h + human | [target-app-parity](target-app-parity.md) |
 | G16 | Plug-in compatibility (.8BF, UXP) | ecosystem | medium | 250–450 h + human | [target-app-parity](target-app-parity.md) |
 | G17 | Platforms and distribution | platforms | low-medium | 30–60 h + human | [scorecard](scorecard.md#distribution) |
 
@@ -101,12 +101,18 @@ what an agent can't finish alone.
 - **Estimate:** 120–200 h.
 
 ### G15. AI and generative features
-- **Missing:** Generative Fill and Expand, Generative Upscale, Neural Filters, Sky Replacement,
-  Super Zoom, ML Select Subject/Sky. There is no ML runtime (AUTO-219-7). Classical substitutes
-  exist (GrabCut/max-flow selection, Remove tool by non-local patch completion).
+- **Landed (2026-10-12):** Generative Fill (`Edit › Generative Fill…`, `edit.generativeFill`) on
+  OpenRouter's `bytedance-seed/seedream-5-0-flash` (`crates/gen`, engine `gen_fill_cmds.rs`):
+  the selection plus context ring is sent with the prompt, and the reply becomes a new layer
+  masked to the selection — background jobs, graceful errors, the key only in the environment.
+- **Missing:** Generative Expand, Generative Upscale, Neural Filters, Sky Replacement,
+  Super Zoom, ML Select Subject/Sky, local models (no ML runtime, AUTO-219-7). Classical
+  substitutes exist (GrabCut/max-flow selection, Remove tool by non-local patch completion);
+  the fill itself is remote, so the web build answers "unsupported" for it.
 - **Evidence:** Photoshop's `Required/UXP` ships the Neural Filters gallery and its `.kys` has
   a Neural Filters taskspace; users ask for local models (#2313, #1996, #2682).
-- **Estimate:** 300–600 h. **Human:** owner decision #41 (model licences, local vs remote).
+- **Estimate:** 250–500 h (Generative Fill done). **Human:** owner decision #41 (model licences,
+  local vs remote).
 
 ### G16. Plug-in compatibility
 - **Missing:** hosting Photoshop .8BF filters (#2647), UXP panels, CEP. PhotoCraft has its own
