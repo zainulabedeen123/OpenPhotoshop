@@ -397,6 +397,11 @@ pub struct Session {
     pub link_scan: Option<link_watch::LinkScan>,
     /// Select Subject's last result, reused while the pixels are unchanged (#2865).
     subject_cache: smartselect_cmds::SubjectCache,
+    /// The OpenRouter API key for `edit.generativeFill`, resolved by the app from the
+    /// environment or its Settings dialog. A secret: never serialized, journalled or logged,
+    /// and never part of a document; `photocraft_gen` still reads the environment first, so a
+    /// shell-provided key keeps winning no matter what this holds.
+    ai_key: Option<String>,
     /// A finished live stroke offered to the `paint.stroke` / `paint.pencil` that commits it
     /// ([`Session::offer_live_stroke`]).
     pub(crate) live_commit: Option<brush_cmds::LiveCommit>,
@@ -427,6 +432,17 @@ impl Session {
     }
     pub fn active(&self) -> Option<&DocState> {
         self.active.and_then(|i| self.docs.get(i))
+    }
+
+    /// Store (or, with `None`, forget) the OpenRouter key Generative Fill falls back to when the
+    /// environment has none. The caller owns where it came from; nothing here writes it down.
+    pub fn set_ai_key(&mut self, key: Option<String>) {
+        self.ai_key = key.map(|k| k.trim().to_string()).filter(|k| !k.is_empty());
+    }
+
+    /// The stored OpenRouter key, if any ([`Session::set_ai_key`]).
+    pub fn ai_key(&self) -> Option<&str> {
+        self.ai_key.as_deref()
     }
     pub fn active_mut(&mut self) -> Option<&mut DocState> {
         self.active.and_then(|i| self.docs.get_mut(i))

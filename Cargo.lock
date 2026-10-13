@@ -4238,6 +4238,7 @@ dependencies = [
  "photocraft-doc",
  "photocraft-engine",
  "photocraft-format",
+ "photocraft-gen",
  "photocraft-geom",
  "photocraft-io",
  "photocraft-raster",

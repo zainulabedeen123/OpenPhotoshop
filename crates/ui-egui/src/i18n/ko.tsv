@@ -3159,3 +3159,24 @@ cameraData	Lens	렌즈
 	Click to place · Alt-click or drag off-canvas to remove	클릭하여 배치 · Alt-클릭 또는 캔버스 밖으로 드래그하여 제거
 	No document open	열린 문서 없음
 	{n} of {max} sample points	{max}개 중 {n}개의 샘플 지점
+	Generative Fill…	제너레이티브 채우기…
+	Prompt:	프롬프트:
+	Mask feather:	마스크 페더:
+	a red sailboat on calm water	잔잔한 수면 위 빨간 작은 배
+	Describe what should fill the selection	선택 영역을 무엇으로 채울지 설명하세요
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	선택한 영역이 이미지 모델로 전송되고, 결과는 선택 영역으로 마스크된 새 레이어에 놓입니다.
+	Select the area to fill first: with no selection there is nothing for the model to fill.	먼저 채울 영역을 선택하세요. 선택이 없으면 모델이 채울 것이 없습니다.
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	생성 전에 설정(오른쪽 위 톱니바퀴)에서 OpenRouter API 키를 저장하세요.
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	채울 영역을 선택하고, 생성 전에 설정(오른쪽 위 톱니바퀴)에서 OpenRouter API 키를 저장하세요.
+	Generative Fill (OpenRouter)	제너레이티브 채우기 (OpenRouter)
+	Key in use: Generative Fill will run with it.	키가 사용 중입니다. 제너레이티브 채우기가 사용합니다.
+	No OpenRouter key yet: Generative Fill needs one before it can run.	아직 OpenRouter 키가 없습니다. 제너레이티브 채우기를 실행하려면 먼저 키가 필요합니다.
+	API key:	API 키:
+	OpenRouter keys usually start with sk-or-	OpenRouter 키는 보통 sk-or-로 시작합니다
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	OpenRouter API 키를 저장하면 편집 › 제너레이티브 채우기로 생성할 수 있습니다. 빈 필드를 저장하면 키가 삭제됩니다.
+	Stored (unencrypted) in:	저장 위치(암호화 안 됨):
+	Stored in the app's settings folder.	앱 설정 폴더에 저장됩니다.
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	이 빌드에는 키 저장소가 없어 키는 이 세션에만 적용됩니다. 제너레이티브 채우기 자체에는 데스크톱 앱이 필요합니다.
+	OpenRouter key saved: Generative Fill is ready	OpenRouter 키 저장됨: 제너레이티브 채우기 준비 완료
+	Save an OpenRouter API key for Generative Fill	제너레이티브 채우기용 OpenRouter API 키 저장
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	키는 비밀입니다. OpenRouter 이미지 요청에만 전송됩니다. 환경 변수 PHOTOCRAFT_OPENROUTER_API_KEY와 OPENROUTER_API_KEY가 우선합니다.

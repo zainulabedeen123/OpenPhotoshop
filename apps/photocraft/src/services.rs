@@ -5,7 +5,7 @@ use photocraft_color::{ColorMode, SampleType};
 use photocraft_doc::{Document, Layer, Size};
 use photocraft_format::RecoveryStore;
 use photocraft_geom::Rect;
-use photocraft_ui_egui::{FileDialogAnswer, FileDialogReply, FileDialogRequest, Recoverable, Services};
+use photocraft_ui_egui::{AiKeyStore, FileDialogAnswer, FileDialogReply, FileDialogRequest, Recoverable, Services};
 use std::cell::RefCell;
 use std::future::Future;
 use std::path::{Path, PathBuf};
@@ -184,6 +184,92 @@ fn recovery_dir() -> Option<PathBuf> {
 /// the preferences go through here, so a failed or interrupted save never destroys the old file.
 fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
     photocraft_format::atomic_write(path, bytes).map_err(|e| e.to_string())
+}
+
+/// The OpenRouter key stored for Generative Fill: one line, `openrouter.key` in the per-user
+/// settings directory, written crash-safely and (where the platform has file modes) readable by
+/// the user alone. A key is a secret: it is never logged, never part of an error, never sent
+/// anywhere but OpenRouter's image request.
+const AI_KEY_FILE: &str = "openrouter.key";
+/// Longest stored key; the Settings dialog refuses longer ones before they arrive here.
+const AI_KEY_MAX: usize = 4096;
+
+/// The key store the Settings dialog talks to. `None` inside means "there is no settings
+/// directory", which leaves Generative Fill environment-only on that machine.
+#[derive(Debug, Clone)]
+pub struct AiKeyFile {
+    path: Option<PathBuf>,
+}
+
+/// The key store living in the app's settings directory ([`crate::app_dirs::config_dir`]).
+pub fn ai_key_file() -> AiKeyFile {
+    AiKeyFile { path: crate::app_dirs::config_dir().map(|dir| dir.join(AI_KEY_FILE)) }
+}
+
+impl photocraft_ui_egui::AiKeyStore for AiKeyFile {
+    fn load(&self) -> Result<Option<String>, String> {
+        let path = self.path.as_ref().ok_or("no settings directory")?;
+        let key = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
+        let key = key.trim();
+        if key.is_empty() {
+            return Ok(None);
+        }
+        if key.chars().count() > AI_KEY_MAX {
+            return Err(format!("{} is longer than {AI_KEY_MAX} characters; edit or remove it", AI_KEY_FILE));
+        }
+        Ok(Some(key.to_string()))
+    }
+
+    fn store(&self, key: Option<&str>) -> Result<(), String> {
+        let path = self.path.as_ref().ok_or("no settings directory")?;
+        match key.map(str::trim).filter(|k| !k.is_empty()) {
+            Some(key) => {
+                if key.chars().count() > AI_KEY_MAX {
+                    return Err(format!("the key is longer than {AI_KEY_MAX} characters"));
+                }
+                write_atomic(path, key.as_bytes())?;
+                restrict_to_owner(path);
+                Ok(())
+            }
+            None => match std::fs::remove_file(path) {
+                Ok(()) => Ok(()),
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+                Err(e) => Err(e.to_string()),
+            },
+        }
+    }
+
+    fn location(&self) -> Option<PathBuf> {
+        self.path.clone()
+    }
+}
+
+/// One user alone may read the key back. POSIX has file modes for that; a Windows or macOS
+/// profile directory is per-user by construction, so there is nothing to do there.
+#[cfg(unix)]
+fn restrict_to_owner(path: &Path) {
+    use std::os::unix::fs::PermissionsExt as _;
+    if let Ok(mut perms) = std::fs::metadata(path).map(|m| m.permissions()) {
+        perms.set_mode(0o600);
+        if let Err(e) = std::fs::set_permissions(path, perms) {
+            log::warn!("openrouter.key: could not restrict its permissions: {e}");
+        }
+    }
+}
+
+#[cfg(not(unix))]
+fn restrict_to_owner(_: &Path) {}
+
+/// The key Generative Fill starts with: the environment first (what agents, CI and the CLI use),
+/// then the one the Settings dialog stored. The caller hands it to the engine, so the Settings
+/// dialog can report the same state the engine will act on.
+pub fn resolve_ai_key(store: &AiKeyFile) -> Option<String> {
+    let env = [photocraft_gen::API_KEY_ENV, photocraft_gen::API_KEY_ENV_FALLBACK]
+        .into_iter()
+        .find_map(|name| std::env::var(name).ok())
+        .map(|key| key.trim().to_string())
+        .filter(|key| !key.is_empty());
+    env.or_else(|| store.load().ok().flatten().filter(|key| !key.trim().is_empty()))
 }
 
 fn export_options(settings: &photocraft_ui_egui::ExportSettings) -> photocraft_io::ExportOptions {
@@ -369,6 +455,7 @@ pub fn native(automation: Option<photocraft_automation::AuthorizedWorkspace>) ->
             photocraft_codecs::encode(&img, photocraft_codecs::Format::Png, &EncodeOptions::default()).map_err(|e| e.to_string())
         })),
         inbox: None,
+        ai_key: Some(std::sync::Arc::new(ai_key_file())),
         open_url: Some(Box::new(|url: &str| open::that(url).map_err(|e| e.to_string()))),
         beep: Some(platform_beep),
         clipboard_set_image: Some({
@@ -501,6 +588,32 @@ mod tests {
     use photocraft_format::list_recovery;
     use photocraft_ui_egui::{PhotocraftApp, prefs_ui};
     use serde_json::{Value, json};
+
+    #[test]
+    fn the_key_file_round_trips_and_removes() {
+        let dir = std::env::temp_dir().join(format!("pc-ai-key-test-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let store = AiKeyFile { path: Some(dir.join(AI_KEY_FILE)) };
+        assert_eq!(store.load().ok().flatten(), None, "nothing there to begin with");
+        store.store(Some("  sk-or-v1-secret  ")).unwrap();
+        assert_eq!(store.load().unwrap().as_deref(), Some("sk-or-v1-secret"), "stored once, trimmed once");
+        assert!(std::fs::read_to_string(dir.join(AI_KEY_FILE)).unwrap().len() <= AI_KEY_MAX, "the file holds the key, nothing else");
+        store.store(Some("   ")).unwrap();
+        assert_eq!(store.load().ok().flatten(), None, "a blank save clears the file");
+        store.store(Some("sk-or-v1-again")).unwrap();
+        store.store(None).unwrap();
+        assert!(!dir.join(AI_KEY_FILE).exists(), "None removes the file");
+        assert_eq!(store.location().and_then(|p| p.file_name().and_then(|n| n.to_str().map(str::to_string))), Some(AI_KEY_FILE.into()));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn a_missing_settings_directory_is_an_error_not_a_panic() {
+        let store = AiKeyFile { path: None };
+        assert!(store.load().is_err());
+        assert!(store.store(Some("sk-or-v1")).is_err());
+        assert_eq!(store.location(), None);
+    }
 
     #[cfg(all(unix, not(target_os = "macos")))]
     #[test]

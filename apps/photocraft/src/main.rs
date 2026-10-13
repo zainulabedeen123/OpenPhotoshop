@@ -337,6 +337,10 @@ fn main() -> eframe::Result {
             let automation = control.as_ref().map(|(_, _, workspace)| workspace.clone());
             let mut services = services::native(automation);
             services.preset_store = presets;
+            // Generative Fill's OpenRouter key: the environment first (agents, CI, the CLI), then
+            // the key the Settings dialog stored. Resolved once here so the dialog, the menu gear
+            // and the engine all report and use the same key; never logged.
+            let startup_ai_key = services::resolve_ai_key(&services::ai_key_file());
             #[cfg(target_os = "linux")]
             let display = tablet::DisplayKind::of(cc);
             #[cfg(target_os = "linux")]
@@ -349,6 +353,7 @@ fn main() -> eframe::Result {
                 }
             }
             let mut app = PhotocraftApp::new(Session::new(), services);
+            app.session.set_ai_key(startup_ai_key);
             app.integrated_titlebar = cfg!(target_os = "macos");
             app.custom_titlebar = custom_titlebar;
             // Only the title bar's free gap drags the window, never the menus (mac_window.rs).

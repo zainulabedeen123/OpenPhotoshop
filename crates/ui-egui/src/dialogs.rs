@@ -235,6 +235,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                 DialogKind::Command if crate::tool_reset::owns(&fields) => crate::tool_reset::body(ui),
                 DialogKind::Command if crate::crop_presets::owns(&fields) => crate::crop_presets::body(app, ui, &mut fields),
                 DialogKind::Command if crate::gen_fill_ui::owns(&fields) => crate::gen_fill_ui::body(app, ui, &mut fields),
+                DialogKind::Command if crate::settings_ui::owns(&fields) => crate::settings_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::variables_ui::owns(&fields) => crate::variables_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::file_ui::owns(&fields) => crate::file_ui::body(app, ui, &mut fields),
                 DialogKind::Command if crate::color_picker_ui::owns(&fields) => {
@@ -296,6 +297,8 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                             tl!("Delete")
                         } else if crate::gen_fill_ui::owns(&d.fields) {
                             tl!("Generate")
+                        } else if crate::settings_ui::owns(&d.fields) {
+                            tl!("Save")
                         } else if d.fields.contains_key("__export") {
                             tl!("Export")
                         } else {
@@ -473,6 +476,7 @@ pub fn confirm(app: &mut PhotocraftApp, id: u64) -> Result<Value, String> {
         DialogKind::Command if crate::tool_reset::owns(&d.fields) => crate::tool_reset::confirm(app),
         DialogKind::Command if crate::crop_presets::owns(&d.fields) => crate::crop_presets::confirm(app, &d.fields),
         DialogKind::Command if crate::gen_fill_ui::owns(&d.fields) => crate::gen_fill_ui::confirm(app, &d.fields),
+        DialogKind::Command if crate::settings_ui::owns(&d.fields) => crate::settings_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::variables_ui::owns(&d.fields) => crate::variables_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::file_ui::owns(&d.fields) => crate::file_ui::confirm(app, &d.fields),
         DialogKind::Command if crate::color_picker_ui::owns(&d.fields) => crate::color_picker_ui::confirm(app, &d.fields),

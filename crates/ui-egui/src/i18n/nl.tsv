@@ -3741,3 +3741,24 @@ cameraData	Lens	Lens
 # Color Sampler (added with the i18n coverage repair)
 	Click to place · Alt-click or drag off-canvas to remove	Klik om te plaatsen · Alt-klik of sleep buiten het canvas om te verwijderen
 	{n} of {max} sample points	{n} van {max} steekproefpunten
+	Generative Fill…	Generatief vullen…
+	Prompt:	Prompt:
+	Mask feather:	Zachte rand van het masker:
+	a red sailboat on calm water	een rood zeilbootje op rustig water
+	Describe what should fill the selection	Beschrijf wat de selectie moet vullen
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	Het geselecteerde gebied gaat naar het afbeeldingsmodel en het resultaat komt op een nieuwe laag, gemaskeerd tot de selectie.
+	Select the area to fill first: with no selection there is nothing for the model to fill.	Selecteer eerst het te vullen gebied: zonder selectie heeft het model niets om te vullen.
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	Bewaar vóór het genereren een OpenRouter-API-sleutel in Instellingen (het tandwiel rechtsboven).
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	Selecteer het te vullen gebied en bewaar vóór het genereren een OpenRouter-API-sleutel in Instellingen (het tandwiel rechtsboven).
+	Generative Fill (OpenRouter)	Generatief vullen (OpenRouter)
+	Key in use: Generative Fill will run with it.	Sleutel in gebruik: Generatief vullen gebruikt hem.
+	No OpenRouter key yet: Generative Fill needs one before it can run.	Nog geen OpenRouter-sleutel: Generatief vullen heeft er eerst een nodig.
+	API key:	API-sleutel:
+	OpenRouter keys usually start with sk-or-	OpenRouter-sleutels beginnen meestal met sk-or-
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	Bewaar een OpenRouter-API-sleutel en Bewerken › Generatief vullen kan genereren. Een leeg veld opslaan verwijdert de sleutel.
+	Stored (unencrypted) in:	Bewaard (niet versleuteld) in:
+	Stored in the app's settings folder.	Bewaard in de instellingenmap van de app.
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	Deze build heeft geen sleutelopslag; de sleutel geldt alleen voor deze sessie. Generatief vullen zelf vereist de desktopapp.
+	OpenRouter key saved: Generative Fill is ready	OpenRouter-sleutel bewaard: Generatief vullen is klaar
+	Save an OpenRouter API key for Generative Fill	OpenRouter-API-sleutel voor Generatief vullen bewaren
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	De sleutel is geheim: hij gaat alleen naar de afbeeldingsaanvraag van OpenRouter. PHOTOCRAFT_OPENROUTER_API_KEY en OPENROUTER_API_KEY uit de omgeving hebben voorrang.

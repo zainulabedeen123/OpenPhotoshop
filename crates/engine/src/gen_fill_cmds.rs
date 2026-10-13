@@ -263,14 +263,64 @@ fn fit(block: Pixels, region: Rect) -> Result<Pixels> {
     Ok(block.resized(sx, sy))
 }
 
-/// Generative Fill: document, selection, prompt and client in; one new layer out.
-fn generative_fill(s: &mut Session, p: &Value) -> Result<Value> {
-    let client = photocraft_gen::Client::from_env().map_err(gen_error)?;
-    generative_fill_with(s, &client, p)
+/// The key a fill runs with: the environment wins (agents, CI, the CLI), then the key the app
+/// stored in the session from its Settings dialog. Environment lookups are passed in so tests
+/// never depend on the machine's.
+fn key_with(get: impl Fn(&str) -> Option<String>, stored: Option<String>) -> Option<String> {
+    let usable = |k: Option<String>| k.map(|k| k.trim().to_string()).filter(|k| !k.is_empty());
+    usable(get(photocraft_gen::API_KEY_ENV).or_else(|| get(photocraft_gen::API_KEY_ENV_FALLBACK))).or(usable(stored))
 }
 
-/// [`generative_fill`] with a caller-supplied client, so tests never touch the network.
+/// The client Generative Fill runs with: resolution like [`key_with`], with the base-url and
+/// model environment overrides applied on top.
+fn client_for(s: &Session) -> std::result::Result<photocraft_gen::Client, photocraft_gen::GenError> {
+    let key = key_with(|name| std::env::var(name).ok(), s.ai_key().map(str::to_string)).ok_or(photocraft_gen::GenError::NoApiKey)?;
+    let client = photocraft_gen::Client::new(key);
+    let override_env = |name: &str| std::env::var(name).ok().map(|v| v.trim().to_string()).filter(|v| !v.is_empty());
+    let client = match override_env(photocraft_gen::BASE_URL_ENV) {
+        Some(url) => client.with_base_url(url),
+        None => client,
+    };
+    Ok(match override_env(photocraft_gen::MODEL_ENV) {
+        Some(model) => client.with_model(model),
+        None => client,
+    })
+}
+
+/// Generative Fill: document, selection, prompt and client in; one new layer out.
+///
+/// Everything the call can refuse without a key is refused first, so a bad request never
+/// resolves a key at all.
+fn generative_fill(s: &mut Session, p: &Value) -> Result<Value> {
+    let prep = prepare(s, p)?;
+    let client = client_for(s).map_err(gen_error)?;
+    run_prepared(s, client, prep)
+}
+
+/// [`generative_fill`] with a caller-supplied client, so tests never touch the network: the
+/// tests below inject a stub transport, and no other caller constructs a client by hand.
+#[cfg(test)]
 pub(crate) fn generative_fill_with(s: &mut Session, client: &photocraft_gen::Client, p: &Value) -> Result<Value> {
+    let prep = prepare(s, p)?;
+    run_prepared(s, client.clone(), prep)
+}
+
+/// What a fill needs before any key is resolved: parsed options, the layer above which the
+/// result lands, the selection and the reference window.
+struct Prepared {
+    prompt: String,
+    feather: f32,
+    reference_side: u32,
+    resolution: &'static str,
+    seed: Option<u64>,
+    id: LayerId,
+    doc: Arc<photocraft_doc::Document>,
+    sel: Surface,
+    region: Rect,
+    doc_format: PixelFormat,
+}
+
+fn prepare(s: &mut Session, p: &Value) -> Result<Prepared> {
     let Options { prompt, feather, reference_side, resolution, seed } = options(p)?;
     let id = crate::commands::layer_param(s, p)?;
     let st = s.active().ok_or(EngineError::NoDocument)?;
@@ -284,9 +334,12 @@ pub(crate) fn generative_fill_with(s: &mut Session, client: &photocraft_gen::Cli
     if region.is_empty() {
         return Err(bad("the selected area is outside the canvas"));
     }
-    let doc_format = doc.pixel_format();
+    Ok(Prepared { prompt, feather, reference_side, resolution, seed, id, doc_format: doc.pixel_format(), sel, region, doc })
+}
+
+fn run_prepared(s: &mut Session, client: photocraft_gen::Client, prep: Prepared) -> Result<Value> {
+    let Prepared { prompt, feather, reference_side, resolution, seed, id, doc, sel, region, doc_format } = prep;
     let work_doc = Arc::clone(&doc);
-    let client = client.clone();
     crate::jobs::run(
         s,
         LABEL,
@@ -360,7 +413,7 @@ fn enabled(s: &Session) -> std::result::Result<(), String> {
 pub fn specs() -> Vec<CommandSpec> {
     vec![CommandSpec {
         id: FILL,
-        label: "Generative FillÃ¢â‚¬Â¦",
+        label: "Generative Fill…",
         menu: &["Edit"],
         shortcut: None,
         params: r##"{"prompt":text (required; what should fill the selection),"layer":id? (default the active layer),"feather":0..250? (pixels; the new layer's mask feather),"maxReferenceSide":256..4096=1536 (longest side of the image sent to the model),"resolution":"1K"|"2K"="1K","seed":int?} Ã¢â€ â€™ {layer,bounds,costUsd}; needs a selection and an API key in PHOTOCRAFT_OPENROUTER_API_KEY (or OPENROUTER_API_KEY)"##,
@@ -526,6 +579,33 @@ mod tests {
         let (client, _) = client(&solid_png(4, 3, [255, 255, 0]));
         let r = generative_fill_with(&mut s, &client, &json!({"prompt": "sun"})).unwrap();
         assert_eq!(r["bounds"], json!([0, 0, 176, 120]), "{r}");
+    }
+
+    #[test]
+    fn the_key_order_is_environment_then_stored() {
+        use photocraft_gen::{API_KEY_ENV, API_KEY_ENV_FALLBACK};
+        // Nothing anywhere.
+        assert_eq!(key_with(|_| None, None), None);
+        // Only the generic environment variable.
+        assert_eq!(key_with(|n| (n == API_KEY_ENV_FALLBACK).then(|| "generic".into()), None).as_deref(), Some("generic"));
+        // The scoped variable beats the generic one, and both beat a stored key.
+        assert_eq!(key_with(|n| (n == API_KEY_ENV || n == API_KEY_ENV_FALLBACK).then(|| "scoped".into()), Some("stored".into())).as_deref(), Some("scoped"));
+        assert_eq!(key_with(|n| (n == API_KEY_ENV_FALLBACK).then(|| "generic".into()), Some("stored".into())).as_deref(), Some("generic"));
+        // The stored (Settings dialog) key is the last resort, and blanks never win.
+        assert_eq!(key_with(|_| None, Some("  stored  ".into())).as_deref(), Some("stored"));
+        assert_eq!(key_with(|n| (n == API_KEY_ENV).then(|| "   ".into()), Some("stored".into())).as_deref(), Some("stored"));
+    }
+
+    #[test]
+    fn stored_session_keys_are_trimmed_and_blanks_mean_none() {
+        let mut s = Session::new();
+        assert_eq!(s.ai_key(), None);
+        s.set_ai_key(Some("  sk-or-v1-test  ".into()));
+        assert_eq!(s.ai_key(), Some("sk-or-v1-test"));
+        s.set_ai_key(Some("   ".into()));
+        assert_eq!(s.ai_key(), None);
+        s.set_ai_key(None);
+        assert_eq!(s.ai_key(), None);
     }
 
     #[test]

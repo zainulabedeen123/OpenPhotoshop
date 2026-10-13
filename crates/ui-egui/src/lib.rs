@@ -152,6 +152,7 @@ pub mod screen_picker;
 pub mod scrollbars;
 pub mod select_mask_view;
 pub mod served_fonts;
+pub mod settings_ui;
 pub mod shape_dialog;
 pub(crate) mod shape_fill_ui;
 pub mod shape_stroke_ui;
@@ -433,6 +434,33 @@ pub struct Services {
     /// while AppKit's run loop is still going crashes or hangs Touch Bar Macs (#1575, #1458).
     /// Without one, eframe closes the window and the app ends with it.
     pub quit: Option<QuitFn>,
+    /// The OpenRouter key storage for Generative Fill (the app's per-user settings directory);
+    /// `None` keeps the key session-only (headless, tests) — the Settings dialog then says so.
+    pub ai_key: Option<std::sync::Arc<dyn AiKeyStore>>,
+}
+
+/// Where the app keeps the OpenRouter API key for Generative Fill: outside every document,
+/// workspace and exported file (the per-user settings directory on desktop).
+///
+/// A key is a secret: implementations trim it, never log it, and tell callers where it lives
+/// with a path, never the key itself. `None` from [`AiKeyStore::store`] removes it.
+pub trait AiKeyStore: Send + Sync {
+    /// The stored key, trimmed; `Ok(None)` when nothing is stored.
+    ///
+    /// # Errors
+    /// A string explaining why the key could not be read (no settings directory, unreadable file).
+    fn load(&self) -> Result<Option<String>, String>;
+
+    /// Store a key (`Some`, trimmed, at most 4096 characters) or remove the stored one (`None`).
+    ///
+    /// # Errors
+    /// A string explaining why the key was not stored; the key itself never appears in it.
+    fn store(&self, key: Option<&str>) -> Result<(), String>;
+
+    /// Where the key is kept, for the Settings dialog's note (the path only, never the key).
+    fn location(&self) -> Option<std::path::PathBuf> {
+        None
+    }
 }
 
 /// A document histogram being computed off the UI thread: (document, revision, receiver of

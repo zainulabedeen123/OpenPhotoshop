@@ -3590,3 +3590,24 @@ cameraData	Lens	レンズ
 	Click to place · Alt-click or drag off-canvas to remove	クリックで配置 · Alt キーを押しながらクリック、またはカンバス外へドラッグで削除
 	No document open	ドキュメントが開かれていません
 	{n} of {max} sample points	{max} 個中 {n} 個のサンプルポイント
+	Generative Fill…	ジェネレーティブ塗りつぶし…
+	Prompt:	プロンプト:
+	Mask feather:	マスクのフェザー:
+	a red sailboat on calm water	穏やかな水面に浮かぶ赤い小舟
+	Describe what should fill the selection	選択範囲を何で塗りつぶすか説明してください
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	選択範囲は画像モデルへ送られ、結果は選択範囲でマスクされた新規レイヤーに配置されます。
+	Select the area to fill first: with no selection there is nothing for the model to fill.	先に塗りつぶす範囲を選択してください。選択がないとモデルは塗りつぶせません。
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	生成の前に、設定(右上の歯車)で OpenRouter の API キーを保存してください。
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	塗りつぶす範囲を選択し、生成の前に設定(右上の歯車)で OpenRouter の API キーを保存してください。
+	Generative Fill (OpenRouter)	ジェネレーティブ塗りつぶし (OpenRouter)
+	Key in use: Generative Fill will run with it.	キーは有効です。ジェネレーティブ塗りつぶしに使われます。
+	No OpenRouter key yet: Generative Fill needs one before it can run.	OpenRouter のキーがまだありません。ジェネレーティブ塗りつぶしにはまずキーが必要です。
+	API key:	API キー:
+	OpenRouter keys usually start with sk-or-	OpenRouter のキーは通常 sk-or- で始まります
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	OpenRouter の API キーを保存すると、編集 › ジェネレーティブ塗りつぶしで生成できます。空のフィールドを保存するとキーは削除されます。
+	Stored (unencrypted) in:	保存先(暗号化なし):
+	Stored in the app's settings folder.	アプリの設定フォルダーに保存されます。
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	このビルドにはキーの保管場所がなく、キーはこのセッションのみ有効です。ジェネレーティブ塗りつぶし本体にはデスクトップアプリが必要です。
+	OpenRouter key saved: Generative Fill is ready	OpenRouter のキーを保存しました。ジェネレーティブ塗りつぶしの準備ができました
+	Save an OpenRouter API key for Generative Fill	ジェネレーティブ塗りつぶし用に OpenRouter の API キーを保存
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	キーは秘密情報です。OpenRouter への画像リクエストにのみ送られます。環境変数 PHOTOCRAFT_OPENROUTER_API_KEY と OPENROUTER_API_KEY が優先されます。

@@ -57,12 +57,13 @@ pub fn open(app: &mut PhotocraftApp) -> Option<u64> {
     Some(app.ui.open_dialog(DialogKind::Command, fields.as_object().cloned().unwrap_or_default()))
 }
 
-/// Whether Generate (and Enter) may run: a prompt, and a selection to fill.
+/// Whether Generate (and Enter) may run: a prompt, a selection to fill, and a key to fill with
+/// ([`crate::settings_ui::key_ready`], which the session knows from the environment or Settings).
 pub fn can_confirm(app: &PhotocraftApp, fields: &Map<String, Value>) -> bool {
     if !owns(fields) {
         return true;
     }
-    prompt_of(fields).is_some() && app.session.active().is_some_and(|st| st.doc.selection.is_some())
+    prompt_of(fields).is_some() && app.session.active().is_some_and(|st| st.doc.selection.is_some()) && crate::settings_ui::key_ready(app)
 }
 
 /// The `edit.generativeFill` params of the dialog's fields. Without a prompt it returns params
@@ -123,10 +124,13 @@ pub fn body(app: &PhotocraftApp, ui: &mut egui::Ui, fields: &mut Map<String, Val
         }
     });
     ui.horizontal_wrapped(|ui| {
-        let note = if app.session.active().is_some_and(|st| st.doc.selection.is_some()) {
-            tl!("The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.")
-        } else {
-            tl!("Select the area to fill first: with no selection there is nothing for the model to fill.")
+        let selected = app.session.active().is_some_and(|st| st.doc.selection.is_some());
+        let keyed = crate::settings_ui::key_ready(app);
+        let note = match (selected, keyed) {
+            (true, true) => tl!("The selected area is sent to the image model and the result is placed on a new layer, masked to the selection."),
+            (true, false) => tl!("Save an OpenRouter API key in Settings (the gear at the top right) before generating."),
+            (false, true) => tl!("Select the area to fill first: with no selection there is nothing for the model to fill."),
+            (false, false) => tl!("Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating."),
         };
         ui.label(egui::RichText::new(note).color(Tokens::get(ui.ctx()).text_faint).small());
     });

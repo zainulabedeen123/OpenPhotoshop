@@ -10,6 +10,7 @@ fn app() -> PhotocraftApp {
 fn app_with_document() -> PhotocraftApp {
     let mut app = app();
     app.run("file.new", json!({"width": 40, "height": 30})).unwrap();
+    app.session.set_ai_key(Some("sk-or-v1-test".into()));
     app
 }
 
@@ -66,6 +67,26 @@ fn generate_needs_a_prompt_and_a_selection() {
     assert!(!can_confirm(&app, &fields_of(&app)), "no selection yet");
     app.run("select.rect", json!({"x": 4, "y": 4, "width": 12, "height": 10})).unwrap();
     assert!(can_confirm(&app, &fields_of(&app)));
+}
+
+#[test]
+fn generate_stays_disabled_until_an_api_key_is_saved() {
+    let mut app = app_with_document();
+    app.session.set_ai_key(None);
+    let ctx = egui::Context::default();
+    crate::menus::invoke(&mut app, &ctx, COMMAND, json!({})).unwrap();
+    app.ui.dialogs.iter_mut().find(|d| owns(&d.fields)).unwrap().fields.insert("prompt".into(), json!("a red sailboat"));
+    app.run("select.rect", json!({"x": 4, "y": 4, "width": 12, "height": 10})).unwrap();
+    let fields = fields_of(&app);
+    assert!(!can_confirm(&app, &fields), "prompt and selection are not enough without a key");
+    // Saving one in Settings makes the same dialog ready: the session carries it.
+    app.ui.status = String::new();
+    crate::settings_ui::open(&mut app);
+    let settings = app.ui.dialogs.iter().find(|d| crate::settings_ui::owns(&d.fields)).unwrap().id;
+    app.ui.dialog_mut(settings).unwrap().fields.insert("apiKey".into(), json!("sk-or-v1-test"));
+    crate::dialogs::confirm(&mut app, settings).unwrap();
+    assert_eq!(app.session.ai_key(), Some("sk-or-v1-test"));
+    assert!(can_confirm(&app, &fields), "the saved key completes the gate");
 }
 
 #[test]

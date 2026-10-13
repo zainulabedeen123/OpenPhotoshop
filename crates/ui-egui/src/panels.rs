@@ -588,6 +588,20 @@ pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
                 let controls_end = {
                     let ui = &mut group_ui;
                     ui.spacing_mut().item_spacing.x = 6.0;
+                    // App Settings — the OpenRouter key for Generative Fill among them — is the
+                    // one far-end control nothing crowds out: every window width can reach it,
+                    // and no menu duplicates it. Drawn first, so it takes the group's outer end;
+                    // the room the rest reports already excludes it.
+                    let ready = crate::settings_ui::key_ready(app);
+                    let settings_tip = format!(
+                        "Settings  ({})",
+                        if ready { tl!("OpenRouter key saved: Generative Fill is ready") } else { tl!("Save an OpenRouter API key for Generative Fill") }
+                    );
+                    let gear = icons::button(ui, "settings", 28.0, false, &settings_tip);
+                    let gear = crate::brush_picker::named(gear, "Settings");
+                    if gear.clicked() {
+                        crate::settings_ui::open(app);
+                    }
                     let mut ws = app.ui.workspace.clone();
                     let opts = [
                         // Keys stay English (`apply_workspace` matches them); the dropdown

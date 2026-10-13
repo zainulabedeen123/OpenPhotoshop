@@ -9,8 +9,10 @@
 //! `wasm32-unknown-unknown`. Network access only exists on native targets; on wasm the client
 //! returns [`GenError::Unsupported`].
 //!
-//! The API key is never written to disk, never logged and never part of a document. It is read
-//! from the environment (`PHOTOCRAFT_OPENROUTER_API_KEY`, falling back to `OPENROUTER_API_KEY`).
+//! The API key never becomes part of a document. [`Client::from_env`] reads it from the
+//! environment (`PHOTOCRAFT_OPENROUTER_API_KEY`, falling back to `OPENROUTER_API_KEY`); callers
+//! that keep a user-entered key elsewhere (the desktop app's Settings dialog) resolve their own
+//! precedence on top of that, and the key is never logged or printed by this crate.
 //!
 //! ```
 //! use photocraft_gen::{Client, GenError, ImageRequest, ReferenceImage, Transport};
@@ -132,8 +134,11 @@ pub struct GeneratedImage {
 /// Everything that can go wrong talking to a generative backend.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum GenError {
-    /// No API key in the environment.
-    #[error("no API key: set {API_KEY_ENV} or {API_KEY_ENV_FALLBACK}")]
+    /// No API key: neither environment variable is set and no stored key was handed over.
+    ///
+    /// Front-ends resolve the key themselves (the desktop app: the environment, then the key
+    /// stored in its settings directory) so this message names both routes.
+    #[error("no API key: set one in the app's Settings dialog, or in {API_KEY_ENV} or {API_KEY_ENV_FALLBACK}")]
     NoApiKey,
     /// The endpoint answered with a non-2xx status.
     #[error("the image API refused the request ({status}): {message}")]

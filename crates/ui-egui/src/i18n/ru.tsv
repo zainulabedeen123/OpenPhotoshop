@@ -2922,3 +2922,24 @@ cameraData	Lens	Объектив
 	Click to place · Alt-click or drag off-canvas to remove	Щёлкните, чтобы разместить · Alt-щелчок или перетаскивание за пределы холста для удаления
 	No document open	Документ не открыт
 	{n} of {max} sample points	{n} из {max} точек замера
+	Generative Fill…	Генеративная заливка…
+	Prompt:	Промпт:
+	Mask feather:	Растушёвка маски:
+	a red sailboat on calm water	красная парусная лодка на спокойной воде
+	Describe what should fill the selection	Опишите, чем заполнить выделенную область
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	Выделенная область отправляется модели изображений, а результат помещается на новый слой с маской по выделению.
+	Select the area to fill first: with no selection there is nothing for the model to fill.	Сначала выделите заполняемую область: без выделения модели нечего заполнять.
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	Сохраните ключ API OpenRouter в настройках (шестерёнка в правом верхнем углу) до генерации.
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	Выделите заполняемую область и сохраните ключ API OpenRouter в настройках (шестерёнка в правом верхнем углу) до генерации.
+	Generative Fill (OpenRouter)	Генеративная заливка (OpenRouter)
+	Key in use: Generative Fill will run with it.	Ключ действует: генеративная заливка его использует.
+	No OpenRouter key yet: Generative Fill needs one before it can run.	Ключа OpenRouter пока нет: генеративной заливке сначала нужен он.
+	API key:	Ключ API:
+	OpenRouter keys usually start with sk-or-	Ключи OpenRouter обычно начинаются с sk-or-
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	Сохраните ключ API OpenRouter, и Редактирование › Генеративная заливка сможет создавать. Сохранение пустого поля удаляет ключ.
+	Stored (unencrypted) in:	Хранится (без шифрования) в:
+	Stored in the app's settings folder.	Хранится в папке настроек приложения.
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	В этой сборке нет хранилища ключей; ключ действует только в текущем сеансе. Сама генеративная заливка требует настольное приложение.
+	OpenRouter key saved: Generative Fill is ready	Ключ OpenRouter сохранён: генеративная заливка готова
+	Save an OpenRouter API key for Generative Fill	Сохранить ключ API OpenRouter для генеративной заливки
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	Ключ — это секрет: он уходит только в запрос изображения OpenRouter. Переменные PHOTOCRAFT_OPENROUTER_API_KEY и OPENROUTER_API_KEY из окружения имеют приоритет.

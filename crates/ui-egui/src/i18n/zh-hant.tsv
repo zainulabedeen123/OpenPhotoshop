@@ -2561,3 +2561,24 @@ cameraData	Lens	鏡頭
 	Click to place · Alt-click or drag off-canvas to remove	按一下以放置 · Alt 按一下或拖曳至畫布外以移除
 	No document open	未開啟任何文件
 	{n} of {max} sample points	{max} 個取樣點中的 {n} 個
+	Generative Fill…	生成式填色…
+	Prompt:	提示詞:
+	Mask feather:	遮色片羽化:
+	a red sailboat on calm water	平靜水面上的紅色小帆船
+	Describe what should fill the selection	描述選取範圍要填入的內容
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	選取的區域會送至影像模型，結果會以新圖層放置，並依選取範圍建立遮色片。
+	Select the area to fill first: with no selection there is nothing for the model to fill.	請先選取要填色的範圍：沒有選取範圍，模型就沒有可填色之處。
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	產生前，請在「設定」(右上角的齒輪)儲存 OpenRouter API 金鑰。
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	請選取要填色的範圍，並先在「設定」(右上角的齒輪)儲存 OpenRouter API 金鑰再產生。
+	Generative Fill (OpenRouter)	生成式填色 (OpenRouter)
+	Key in use: Generative Fill will run with it.	金鑰已就位：生成式填色將使用它。
+	No OpenRouter key yet: Generative Fill needs one before it can run.	尚無 OpenRouter 金鑰：生成式填色需要先有金鑰。
+	API key:	API 金鑰:
+	OpenRouter keys usually start with sk-or-	OpenRouter 金鑰通常以 sk-or- 開頭
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	儲存 OpenRouter API 金鑰後，編輯 › 生成式填色即可產生內容。儲存空白欄位會刪除金鑰。
+	Stored (unencrypted) in:	儲存於(未加密):
+	Stored in the app's settings folder.	儲存在應用程式的設定資料夾中。
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	此組建沒有金鑰儲存區；金鑰僅在本工作階段內有效。生成式填色本身需要桌面版應用程式。
+	OpenRouter key saved: Generative Fill is ready	OpenRouter 金鑰已儲存：生成式填色已就緒
+	Save an OpenRouter API key for Generative Fill	儲存 OpenRouter API 金鑰以使用生成式填色
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	金鑰屬於機密：只會傳送至 OpenRouter 的影像要求。環境變數 PHOTOCRAFT_OPENROUTER_API_KEY 與 OPENROUTER_API_KEY 優先於它。

@@ -3591,3 +3591,24 @@ cameraData	Lens	Obiektyw
 	Click to place · Alt-click or drag off-canvas to remove	Kliknij, aby umieścić · Alt-kliknij lub przeciągnij poza obszar roboczy, aby usunąć
 	No document open	Brak otwartego dokumentu
 	{n} of {max} sample points	{n} z {max} punktów próbkowania
+	Generative Fill…	Wypełnienie generatywne…
+	Prompt:	Monit:
+	Mask feather:	Wygładzanie maski:
+	a red sailboat on calm water	czerwony żaglowiec na spokojnej wodzie
+	Describe what should fill the selection	Opisz, czym wypełnić zaznaczenie
+	The selected area is sent to the image model and the result is placed on a new layer, masked to the selection.	Zaznaczony obszar trafia do modelu obrazu, a wynik ląduje na nowej warstwie, maskowanej zaznaczeniem.
+	Select the area to fill first: with no selection there is nothing for the model to fill.	Najpierw zaznacz obszar do wypełnienia: bez zaznaczenia model nie ma niczego do wypełnienia.
+	Save an OpenRouter API key in Settings (the gear at the top right) before generating.	Przed generowaniem zapisz klucz API OpenRouter w Ustawieniach (koło zębate w prawym górnym rogu).
+	Select the area to fill, and save an OpenRouter API key in Settings (the gear at the top right), before generating.	Zaznacz obszar do wypełnienia i przed generowaniem zapisz klucz API OpenRouter w Ustawieniach (koło zębate w prawym górnym rogu).
+	Generative Fill (OpenRouter)	Wypełnienie generatywne (OpenRouter)
+	Key in use: Generative Fill will run with it.	Klucz działa: wypełnienie generatywne go użyje.
+	No OpenRouter key yet: Generative Fill needs one before it can run.	Nie ma jeszcze klucza OpenRouter: wypełnienie generatywne najpierw go potrzebuje.
+	API key:	Klucz API:
+	OpenRouter keys usually start with sk-or-	Klucze OpenRouter zaczynają się zwykle od sk-or-
+	Save an OpenRouter API key and Edit › Generative Fill can generate. Saving an empty field removes the key.	Zapisz klucz API OpenRouter, a Edycja › Wypełnienie generatywne będzie mogło tworzyć. Zapis pustego pola usuwa klucz.
+	Stored (unencrypted) in:	Przechowywany (niezaszyfrowany) w:
+	Stored in the app's settings folder.	Przechowywany w folderze ustawień aplikacji.
+	This build has no key storage; the key applies to this session only. Generative Fill itself needs the desktop app.	Ta kompilacja nie ma magazynu kluczy; klucz obowiązuje tylko w tej sesji. Samo wypełnienie generatywne wymaga aplikacji na komputer.
+	OpenRouter key saved: Generative Fill is ready	Klucz OpenRouter zapisany: wypełnienie generatywne gotowe
+	Save an OpenRouter API key for Generative Fill	Zapisz klucz API OpenRouter do wypełnienia generatywnego
+	The key is a secret: it is sent only to OpenRouter's image request. PHOTOCRAFT_OPENROUTER_API_KEY and OPENROUTER_API_KEY in the environment win over it.	Klucz to tajemnica: trafia tylko do zapytania obrazu OpenRouter. Zmienne PHOTOCRAFT_OPENROUTER_API_KEY i OPENROUTER_API_KEY ze środowiska mają pierwszeństwo.
